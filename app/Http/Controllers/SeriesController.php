@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SeriesFormRequest;
+use App\Models\Episodes;
+use App\Models\Seasons;
 use App\Models\Serie;
 use Illuminate\Http\Request;
 
@@ -15,8 +18,12 @@ class SeriesController extends Controller
             ->orderBy('name', 'ASC')
             ->get();
 
+        $messageSuccess = $request->session()->get('message.success');
+        // $request->session()->forget('message.success');
+        
         return view('series.index')
-            ->with('series', $series);
+            ->with('series', $series)
+            ->with('messageSuccess', $messageSuccess);
     }
 
     /**
@@ -29,14 +36,35 @@ class SeriesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
-        $nameSerie = $request->input('name');
-        $serie = new Serie();
+    public function store(SeriesFormRequest $request) {
+        
+        $serie = Serie::create($request->all());
+        $seasons = [];
 
-        $serie->name = $nameSerie;
-        $serie->save();
+        for($i = 0; $i < $request->seasons; $i++) {
+            $seasons[] = [
+                'series_id' =>$serie->id,
+                'number' => $i
+            ]; 
+        }
 
-        return redirect('series');
+        Seasons::insert($seasons);
+
+        $episodes = [];
+        foreach($serie->seasons as $seasons){
+            for($j = 0; $j < $request->episodes; $j++) {
+                $episodes[] = [
+                    'seasons_id' => $seasons->id,
+                    'number' => $j
+                ];
+            }
+        }
+
+        Episodes::insert($episodes);
+
+
+        return to_route('series.index')
+            ->with('message.success', "{$serie->name} adicionada(o) com sucesso!");
     }
 
     /**
@@ -49,21 +77,33 @@ class SeriesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id) {
-        //
+    public function edit(Request $request, Serie $series) {
+        $series->update($request->all());
+       
+        return view('series.edit')
+            ->with('serie', $series);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id) {
-        //
+    public function update(SeriesFormRequest $request, Serie $series) {
+        $series->fill($request->all());
+        $series->save();
+
+
+        return to_route('series.index')
+            ->with('message.success', "{$series->name} atualizada com sucesso!");;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id) {
-        //
+    public function destroy(Serie $series) {
+       
+        $series->delete();
+
+        return to_route('series.index')
+            ->with('message.success', "{$series->name} deletada com sucesso!");
     }
 }
