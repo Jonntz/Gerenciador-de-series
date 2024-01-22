@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SeriesFormRequest;
-use App\Models\Episodes;
-use App\Models\Seasons;
 use App\Models\Serie;
+use App\Repositories\series\SeriesRepository;
 use Illuminate\Http\Request;
 
 class SeriesController extends Controller
 {
+    public function __construct(private SeriesRepository $seriesRepository) {
+        
+    }
     /**
      * Display a listing of the resource.
      */
@@ -37,36 +39,15 @@ class SeriesController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(SeriesFormRequest $request) {
-        
-        $serie = Serie::create($request->all());
-        $seasons = [];
 
-        for($i = 0; $i < $request->seasons; $i++) {
-            $seasons[] = [
-                'series_id' =>$serie->id,
-                'number' => $i
-            ]; 
-        }
-
-        Seasons::insert($seasons);
-
-        $episodes = [];
-        foreach($serie->seasons as $seasons){
-            for($j = 0; $j < $request->episodes; $j++) {
-                $episodes[] = [
-                    'seasons_id' => $seasons->id,
-                    'number' => $j
-                ];
-            }
-        }
-
-        Episodes::insert($episodes);
-
+        $serie = $this
+            ->seriesRepository
+            ->add($request);
 
         return to_route('series.index')
             ->with('message.success', "{$serie->name} adicionada(o) com sucesso!");
     }
-
+ 
     /**
      * Display the specified resource.
      */
