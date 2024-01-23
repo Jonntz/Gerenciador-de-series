@@ -16,7 +16,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
         <div class="container-fluid">
           <a class="navbar-brand" href="{{ route('series.index') }}">Controlador de séries</a>
-          <a class="text-white text-decoration-none" href="{{ route('logout') }}" href="#">Logout</a>
+
+          @auth
+            <a class="text-white text-decoration-none" href="{{ route('logout') }}">Sair</a>
+          @endauth
         </div>
       </nav>
 
