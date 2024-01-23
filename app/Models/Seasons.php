@@ -12,10 +12,18 @@ class Seasons extends Model
     protected $fillable = ['number'];
 
     public function series(){
-        return $this->belongsTo(Series::class);
+        return $this->belongsTo(Serie::class);
     }
 
     public function episodes(){
         return $this->hasMany(Episodes::class);
     }
+
+    public function numberOfWatchedEpisode() : int{
+        return $this
+            ->episodes
+            ->filter(fn ($episode) => $episode->watched)
+            ->count();
+    }
+        
 }
