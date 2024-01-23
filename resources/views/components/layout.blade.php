@@ -11,26 +11,36 @@
 
     
 </head>
-<body class="container">
-    <h1>{{$title}}</h1>
+<body>
 
-    @isset($messageSuccess)
-        <div class="alert alert-success">
-            {{ $messageSuccess }}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{{ route('series.index') }}">Controlador de séries</a>
+          <a class="text-white text-decoration-none" href="{{ route('logout') }}" href="#">Logout</a>
         </div>
-    @endisset
-    
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+      </nav>
 
-    {{ $slot }}
+    <div class="container">
+        <h1>{{$title}}</h1>
+
+        @isset($messageSuccess)
+            <div class="alert alert-success">
+                {{ $messageSuccess }}
+            </div>
+        @endisset
+        
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{ $slot }}
+    </div>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </body>

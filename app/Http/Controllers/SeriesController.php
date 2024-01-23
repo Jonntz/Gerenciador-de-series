@@ -16,6 +16,7 @@ class SeriesController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request) {
+       
         $series = Serie::query()
             ->orderBy('name', 'ASC')
             ->get();
